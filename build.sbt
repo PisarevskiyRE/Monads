@@ -6,3 +6,12 @@ lazy val root = (project in file("."))
   .settings(
     name := "Monads"
   )
+
+
+
+scalacOptions ++= Seq(
+  "-feature",
+  "-deprecation",
+  "-language:implicitConversions",
+  "-language:higherKinds"
+)
