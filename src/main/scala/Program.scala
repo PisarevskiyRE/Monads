@@ -1,10 +1,10 @@
-import fplibrary.Description
+import fplibrary._
 
 import scala.annotation.tailrec
 
 object Program {
 
-  def creteDescription(args: Array[String]): Description[Unit] = () => {
+  def creteDescription(args: Array[String]): Description[Unit] = Description.create {
 
     display(hyphens)
 

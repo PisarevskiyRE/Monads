@@ -1,4 +1,4 @@
-import fplibrary.Description
+import fplibrary._
 
 object Interpreter {
   def main(args: Array[String]): Unit = {
