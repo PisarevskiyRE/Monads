@@ -8,10 +8,10 @@ lazy val root = (project in file("."))
   )
 
 
-
 scalacOptions ++= Seq(
   "-feature",
   "-deprecation",
   "-language:implicitConversions",
   "-language:higherKinds"
 )
+
