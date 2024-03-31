@@ -1,6 +1,7 @@
 import fplibrary._
 
 object Interpreter {
+
   def main(args: Array[String]): Unit = {
 
     println(Console.RED)

@@ -4,33 +4,45 @@ import scala.annotation.tailrec
 
 object Program {
 
-  def creteDescription(args: Array[String]): Description[Unit] = Description.create {
+  def creteDescription(args: Array[String]): Description[Unit] =
+    Description.create(
+      display(
+        hyphens(
+          display(
+            createMessage(
+              round(
+                ensureAmountPositive(
+                  convertStringToInt(
+                    prompt(
+                      display(
+                        question(
+                          display(
+                            hyphens(
+                              ()
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
 
-    display(hyphens)
+  private def hyphens(input: Any): String =
+    "─" * 50
 
-    display(question)
-
-    val input: String = prompt()
-    val integerAmount: Int = convertStringToInt(input)
-    val positiveAmount: Int = ensureAmountPositive(integerAmount)
-    val balance: Int = round(positiveAmount)
-    val message: String = createMessage(balance)
-
-    display(message)
-
-    display(hyphens)
-  }
-
-  private val hyphens: String =
-    "\u2500" * 50
-
-  private val question: String =
+  private def question(input: Any): String =
     "Внеси бабки"
 
   private def display(input: Any): Unit =
     println(input)
 
-  private def prompt(): String = "5"
+  private def prompt(input: Any): String = "5"
   //scala.io.StdIn.readLine()
 
   private def convertStringToInt(input: String): Int =
@@ -53,6 +65,6 @@ object Program {
     amount % 100 == 0
 
   private def createMessage(balance: Int): String =
-    s"Еба боба -  $balance"
+    s"Ёба боба -  $balance"
 
 }
