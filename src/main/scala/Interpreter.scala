@@ -6,11 +6,11 @@ object Interpreter {
 
     println(Console.RED)
 
-    def description: Description[Unit] =
+    def description: IO[Unit] =
       Program.creteDescription(args)
 
-    def interpreter[A](description: Description[A]): A =
-      description.apply()
+    def interpreter[A](description: IO[A]): A =
+      description.unsafeRun()
 
     println(Console.GREEN)
     interpreter(description)

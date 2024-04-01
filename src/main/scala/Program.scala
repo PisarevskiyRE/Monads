@@ -1,7 +1,5 @@
 import fplibrary._
 
-import scala.annotation.tailrec
-
 object Program {
 
   //  lazy val creteDescription: Array[String] => Description[Unit] = args =>
@@ -33,7 +31,9 @@ object Program {
   //      )
   //    )
 
-  lazy val creteDescription: Array[String] => Description[Unit] = {
+  import IO._
+
+  lazy val creteDescription: Array[String] => IO[Unit] = {
 
     // format: OFF
       ignoreArgs            -->
@@ -48,8 +48,7 @@ object Program {
       createMessage         -->
       displayKleisli               >=>
       hyphens               -->
-      displayKleisli               >=>
-      Description.brokenCreate
+      displayKleisli
 
     // format: ON
   }
@@ -62,11 +61,11 @@ object Program {
 
   private lazy val display: Any => Unit = input => println(input)
 
-  private lazy val displayKleisli: Any => Description[Unit] = input => Description.create {
+  private lazy val displayKleisli: Any => IO[Unit] = input => IO.create {
     println(input)
   }
 
-  private lazy val promptKleisli: Any => Description[String] = _ => Description.create("5")
+  private lazy val promptKleisli: Any => IO[String] = _ => IO.create("5")
   //scala.io.StdIn.readLine()
 
   private lazy val prompt: Any => String = input => "5"
