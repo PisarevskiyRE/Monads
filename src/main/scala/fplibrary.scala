@@ -6,10 +6,10 @@ package object fplibrary {
   private type RegularArrow[A, B] = A => B
   private type KleisliArrow[A, B, C[_]] = A => C[B]
 
-
-
   implicit final class InfixNotationForPointFree[A, B](private val ab: A => B) extends AnyVal {
-    def `;`[C](bc: B => C): A => C = ???
+    @inline def `;`[C](bc: B => C): A => C = PointFree.compose(ab, bc)
+    @inline def `.`[C](bc: B => C): A => C = PointFree.compose(ab, bc)
+    @inline def `-->`[C](bc: B => C): A => C = PointFree.compose(ab, bc)
   }
 
 }

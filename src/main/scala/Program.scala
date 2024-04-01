@@ -4,67 +4,83 @@ import scala.annotation.tailrec
 
 object Program {
 
-  def creteDescription(args: Array[String]): Description[Unit] =
-    Description.create(
-      display(
-        hyphens(
-          display(
-            createMessage(
-              round(
-                ensureAmountPositive(
-                  convertStringToInt(
-                    prompt(
-                      display(
-                        question(
-                          display(
-                            hyphens(
-                              ()
-                            )
-                          )
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-    )
+  //  lazy val creteDescription: Array[String] => Description[Unit] = args =>
+  //    Description.create(
+  //      display(
+  //        hyphens(
+  //          display(
+  //            createMessage(
+  //              round(
+  //                ensureAmountPositive(
+  //                  convertStringToInt(
+  //                    prompt(
+  //                      display(
+  //                        question(
+  //                          display(
+  //                            hyphens(
+  //                              ()
+  //                            )
+  //                          )
+  //                        )
+  //                      )
+  //                    )
+  //                  )
+  //                )
+  //              )
+  //            )
+  //          )
+  //        )
+  //      )
+  //    )
 
-  private def hyphens(input: Any): String =
-    "─" * 50
+  lazy val creteDescription: Array[String] => Description[Unit] = {
 
-  private def question(input: Any): String =
-    "Внеси бабки"
+    // format: OFF
+      ignoreArgs            `;`
+      hyphens               `;`
+      display               `;`
+      question              `;`
+      display               `;`
+      prompt                `;`
+      convertStringToInt    `;`
+      ensureAmountPositive  `;`
+      round                 `;`
+      createMessage         `;`
+      display               `;`
+      hyphens               `;`
+      display               `;`
+      Description.brokenCreate
 
-  private def display(input: Any): Unit =
-    println(input)
+    // format: ON
+  }
 
-  private def prompt(input: Any): String = "5"
+  private lazy val ignoreArgs: Array[String] => Unit = _ => ()
+
+  private lazy val hyphens: Any => String = _ => "─" * 50
+
+  private lazy val question: Any => String = _ => "Внеси бабки"
+
+  private lazy val display: Any => Unit = input => println(input)
+
+  private lazy val prompt: Any => String = input => "5"
   //scala.io.StdIn.readLine()
 
-  private def convertStringToInt(input: String): Int =
-    input.toInt
+  private lazy val convertStringToInt: String => Int = input => input.toInt
 
-  private def ensureAmountPositive(amount: Int): Int =
-    if (amount < 1)
-      1
-    else
-      amount
+  private lazy val ensureAmountPositive: Int => Int = amount => if (amount < 1)
+    1
+  else
+    amount
 
-  @tailrec
-  private def round(amount: Int): Int =
+  private lazy val round: Int => Int = amount => {
     if (isDivisibleByHundred(amount))
       amount
     else
       round(amount + 1)
+  }
 
-  private def isDivisibleByHundred(amount: Int): Boolean =
-    amount % 100 == 0
+  private lazy val isDivisibleByHundred: Int => Boolean = amount => amount % 100 == 0
 
-  private def createMessage(balance: Int): String =
-    s"Ёба боба -  $balance"
+  private lazy val createMessage: Int => String = balance => s"Ёба боба -  $balance"
 
 }
