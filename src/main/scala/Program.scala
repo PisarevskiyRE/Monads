@@ -36,19 +36,19 @@ object Program {
   lazy val creteDescription: Array[String] => Description[Unit] = {
 
     // format: OFF
-      ignoreArgs            `;`
-      hyphens               `;`
-      display               `;`
-      question              `;`
-      display               `;`
-      prompt                `;`
-      convertStringToInt    `;`
-      ensureAmountPositive  `;`
-      round                 `;`
-      createMessage         `;`
-      display               `;`
-      hyphens               `;`
-      display               `;`
+      ignoreArgs            -->
+      hyphens               -->
+      displayKleisli               >=>
+      question              -->
+      displayKleisli               >=>
+      promptKleisli                >=>
+      convertStringToInt    -->
+      ensureAmountPositive  -->
+      round                 -->
+      createMessage         -->
+      displayKleisli               >=>
+      hyphens               -->
+      displayKleisli               >=>
       Description.brokenCreate
 
     // format: ON
@@ -61,6 +61,13 @@ object Program {
   private lazy val question: Any => String = _ => "Внеси бабки"
 
   private lazy val display: Any => Unit = input => println(input)
+
+  private lazy val displayKleisli: Any => Description[Unit] = input => Description.create {
+    println(input)
+  }
+
+  private lazy val promptKleisli: Any => Description[String] = _ => Description.create("5")
+  //scala.io.StdIn.readLine()
 
   private lazy val prompt: Any => String = input => "5"
   //scala.io.StdIn.readLine()
