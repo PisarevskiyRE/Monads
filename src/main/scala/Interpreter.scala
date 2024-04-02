@@ -7,7 +7,7 @@ object Interpreter {
     println(Console.RED)
 
     def description: IO[Unit] =
-      Program.creteDescription(args)
+      ProgramOld.creteDescription(args)
 
     def interpreter[A](description: IO[A]): A =
       description.unsafeRun()
