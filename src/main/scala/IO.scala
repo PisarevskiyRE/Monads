@@ -6,8 +6,6 @@ object IO {
 
   def create[A](a: => A): IO[A] = IO(() => a)
 
-  //  def brokenCreate[A]: A => Description[A] = a =>
-  //    () => a
 
   implicit val M: Monad[IO] = new Monad[IO] {
     final override def flatMap[A, B](ca: IO[A])(acb: A => IO[B]): IO[B] = IO.create {
