@@ -1,61 +1,61 @@
-import fplibrary.IO
+import fplibrary._
 
 import scala.annotation.tailrec
 
 object ProgramOld {
 
-  def creteDescription(args: Array[String]): IO[Unit] = IO.create {
-
-    val firstIO: IO[Unit] = displayKleisli(hyphens)
-
-    val secondIO: IO[Unit] = IO.create {
-      val _: Unit = firstIO.unsafeRun() //1
-      val secondIO: IO[Unit] = displayKleisli(question)
-
-      val secondIOResult: Unit = secondIO.unsafeRun()
-
-      secondIOResult
-    }
-
-    val thirdIO: IO[String] = IO.create {
-      val _: Unit = secondIO.unsafeRun() //2
-      val thirdIO: IO[String] = promptKleisli
-      val input: String = thirdIO.unsafeRun()
-
-      input
-    }
-
-    val fourthIO: IO[String] = IO.create {
-
-      val input: String = thirdIO.unsafeRun() //3
-
-      val fourthIO: IO[String] = IO.create {
-        val integerAmount: Int = convertStringToInt(input)
-        val positiveAmount: Int = ensureAmountPositive(integerAmount)
-        val balance: Int = round(positiveAmount)
-        val message: String = createMessage(balance)
-        message
+  def creteDescription(args: Array[String]): IO[Unit] =
+    displayKleisli(hyphens).flatMap { _ =>
+      displayKleisli(question).flatMap { _ =>
+        promptKleisli.flatMap { input =>
+          IO.create {
+            val integerAmount: Int = convertStringToInt(input)
+            val positiveAmount: Int = ensureAmountPositive(integerAmount)
+            val balance: Int = round(positiveAmount)
+            val message: String = createMessage(balance)
+            message
+          }.flatMap { message =>
+            displayKleisli(message).flatMap { _ =>
+              displayKleisli(hyphens)
+            }
+          }
+        }
       }
-      val message: String = fourthIO.unsafeRun()
-
-      message
     }
 
-    val fifthIO: IO[Unit] = IO.create {
-      val message: String = fourthIO.unsafeRun() //4
-      val fifthIO: IO[Unit] = displayKleisli(message)
-      val fifthIOResult: Unit = fifthIO.unsafeRun()
-      fifthIOResult
-    }
+//  def creteDescription(args: Array[String]): IO[Unit] = for {
+//    _ <- displayKleisli(hyphens)
+//    _ <- displayKleisli(question)
+//    input <- promptKleisli
+//    message <-  IO.create {
+//                  val integerAmount: Int = convertStringToInt(input)
+//                  val positiveAmount: Int = ensureAmountPositive(integerAmount)
+//                  val balance: Int = round(positiveAmount)
+//                  val message: String = createMessage(balance)
+//                  message
+//                }
+//    _ <- displayKleisli(message)
+//    _ <- displayKleisli(hyphens)
+//  } yield ()
 
-    val sixthIO: IO[Unit] = IO.create {
-      val _: Unit = fifthIO.unsafeRun() //5
-      val sixthIO: IO[Unit] = displayKleisli(hyphens)
-      val sixthIOResult = sixthIO.unsafeRun()
-      sixthIOResult
-    }
 
-    sixthIO
+  def associativityLaw = {
+    type AnythingThatHasMonad[A] = IO[A]
+    type AnyType = Int
+    val anyValue: AnyType = 5
+
+    val io: AnythingThatHasMonad[AnyType] = IO.create(anyValue)
+    val f: AnyType => AnythingThatHasMonad[String] = a => IO.create(a.toString)
+    val g: String => AnythingThatHasMonad[Unit] = a => IO.create(println(a))
+
+    io.flatMap(f).flatMap(g) == io.flatMap(a => f(a).flatMap(g))
+    io.flatMap(f).flatMap(g) == io.flatMap(f >=> g)
+
+    val f1: AnyType => String = a => a.toString
+    val g1: String => Unit = a => println(a)
+
+    //    io.map(f1).map(g1) == io.map(a => g1(f1(a)))
+    //    io.map(f1).map(g1) == io.map(f1 --> g1)
 
   }
 
