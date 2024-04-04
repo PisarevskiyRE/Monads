@@ -4,40 +4,40 @@ import scala.annotation.tailrec
 
 object ProgramOld {
 
-  def creteDescription(args: Array[String]): IO[Unit] =
-    displayKleisli(hyphens).flatMap { _ =>
-      displayKleisli(question).flatMap { _ =>
-        promptKleisli.flatMap { input =>
-          IO.create {
-            val integerAmount: Int = convertStringToInt(input)
-            val positiveAmount: Int = ensureAmountPositive(integerAmount)
-            val balance: Int = round(positiveAmount)
-            val message: String = createMessage(balance)
-            message
-          }.flatMap { message =>
-            displayKleisli(message).flatMap { _ =>
-              displayKleisli(hyphens)
-            }
-          }
-        }
-      }
-    }
+  //  def creteDescription(args: Array[String]): IO[Unit] =
+  //    displayKleisli(hyphens).flatMap { _ =>
+  //      displayKleisli(question).flatMap { _ =>
+  //        promptKleisli.flatMap { input =>
+  //          IO.create {
+  //            val integerAmount: Int = convertStringToInt(input)
+  //            val positiveAmount: Int = ensureAmountPositive(integerAmount)
+  //            val balance: Int = round(positiveAmount)
+  //            val message: String = createMessage(balance)
+  //            message
+  //          }.flatMap { message =>
+  //            displayKleisli(message).flatMap { _ =>
+  //              displayKleisli(hyphens).map { _ =>
+  //                ()
+  //              }
+  //            }
+  //          }
+  //        }
+  //      }
+  //    }
 
-//  def creteDescription(args: Array[String]): IO[Unit] = for {
-//    _ <- displayKleisli(hyphens)
-//    _ <- displayKleisli(question)
-//    input <- promptKleisli
-//    message <-  IO.create {
-//                  val integerAmount: Int = convertStringToInt(input)
-//                  val positiveAmount: Int = ensureAmountPositive(integerAmount)
-//                  val balance: Int = round(positiveAmount)
-//                  val message: String = createMessage(balance)
-//                  message
-//                }
-//    _ <- displayKleisli(message)
-//    _ <- displayKleisli(hyphens)
-//  } yield ()
+  def creteDescription(args: Array[String]): IO[Unit] = for {
+    _ <- displayKleisli(hyphens)
+    _ <- displayKleisli(question)
+    input <- promptKleisli
 
+    integerAmount = convertStringToInt(input)
+    positiveAmount = ensureAmountPositive(integerAmount)
+    balance = round(positiveAmount)
+    message = createMessage(balance)
+
+    _ <- displayKleisli(message)
+    _ <- displayKleisli(hyphens)
+  } yield ()
 
   def associativityLaw = {
     type AnythingThatHasMonad[A] = IO[A]
@@ -54,10 +54,26 @@ object ProgramOld {
     val f1: AnyType => String = a => a.toString
     val g1: String => Unit = a => println(a)
 
-    //    io.map(f1).map(g1) == io.map(a => g1(f1(a)))
-    //    io.map(f1).map(g1) == io.map(f1 --> g1)
+    io.map(f1).map(g1) == io.map(a => g1(f1(a)))
+    io.map(f1).map(g1) == io.map(f1 --> g1)
 
   }
+
+  def identityLaw = {
+    type AnythingThatHasMonad[A] = IO[A]
+    type AnyType = Int
+    val anyValue: AnyType = 5
+
+    val M = Monad[IO]
+    val f: AnyType => AnythingThatHasMonad[String] = a => M.pure(a.toString)
+
+    val io = M.pure(anyValue)
+    M.flatMap(io)(f) == io
+    io.flatMap(f) == io
+    f(anyValue).flatMap(a => IO.create(a)) == IO.create(anyValue)
+
+  }
+
 
   private val hyphens: String =
     "\u2500" * 50
