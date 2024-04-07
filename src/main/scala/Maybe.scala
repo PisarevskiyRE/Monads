@@ -1,6 +1,26 @@
 package fplibrary
 
-sealed abstract class Maybe[+A] extends Product with Serializable
+import fplibrary.Maybe.M
+
+sealed abstract class Maybe[+A] extends Product with Serializable {
+
+  final def getOrElse[Super >: A](alternative: => Super): Super = this match {
+    case Maybe.Just(a) => a
+    case Maybe.Nothing => alternative
+  }
+
+  final def mapOrElse[B](alternative: => B)(ab: A => B): B = this match {
+    case Maybe.Just(a) => ab(a)
+    case Maybe.Nothing => alternative
+  }
+
+  final def isJust: Boolean =
+    isInstanceOf[Maybe.Just[_]]
+
+
+  final def isNothing: Boolean =
+    !isJust
+}
 
 object Maybe {
   final case class Just[+A](a: A) extends Maybe[A]

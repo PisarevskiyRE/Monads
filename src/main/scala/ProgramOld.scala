@@ -26,24 +26,26 @@ object ProgramOld {
     _ <- display(hyphens)
   } yield ()
 
+
+  private def fromInputToTuple(input: String): IO[(String, Boolean)] = IO.create{
+    val meybeInteger: Maybe[Int] = convertStringToInt(input)
+
+    val message = meybeInteger.mapOrElse("}{y")(fromIntegerInputToMessage)
+
+    val wasInputValid = meybeInteger.isJust
+
+
+    message -> wasInputValid
+
+  }
+
+
   private def fromInputToMessage(input: String): String = {
+    convertStringToInt(input).mapOrElse("}{y")(fromIntegerInputToMessage)
+  }
 
-    val maybeInteger: Maybe[Int] = convertStringToInt(input)
-
-    val message: String = maybeInteger match {
-      case Maybe.Just(integerAmount) =>
-        val positiveAmount = ensureAmountPositive(integerAmount)
-        val balance = round(positiveAmount)
-        val message = createMessage(balance)
-
-        message
-      case Maybe.Nothing =>
-        val message = "}{y"
-
-        message
-    }
-
-    message
+  private def fromIntegerInputToMessage(integerAmount: Int): String = {
+    createMessage(round(ensureAmountPositive(integerAmount)))
   }
 
   //  def associativityLaw = {
