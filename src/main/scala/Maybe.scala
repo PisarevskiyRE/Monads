@@ -17,7 +17,6 @@ sealed abstract class Maybe[+A] extends Product with Serializable {
   final def isJust: Boolean =
     isInstanceOf[Maybe.Just[_]]
 
-
   final def isNothing: Boolean =
     !isJust
 }

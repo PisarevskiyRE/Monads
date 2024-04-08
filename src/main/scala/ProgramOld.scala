@@ -17,28 +17,45 @@ object ProgramOld {
   //      }
   //    }
 
-  def creteDescription(args: Array[String]): IO[Unit] = for {
+  def createDescription(args: Array[String]): IO[Unit] =
+    loop(triesLeftAfterThisIteration = 3)
+
+  def loop(triesLeftAfterThisIteration: Int): IO[Unit] = for {
+
     _ <- display(hyphens)
     _ <- display(question)
     input <- prompt
-
-    _ <- display(fromInputToMessage(input))
+    result <- fromInputToTuple(input)
+    (message, wasInputValid) = result
+    _ <- display(message)
     _ <- display(hyphens)
+    _ <- {
+      if (wasInputValid)
+        IO.create(())
+      else if (triesLeftAfterThisIteration == 0) for {
+        _ <- display("Й")
+        _ <- display(hyphens)
+      } yield ()
+      else {
+        //loop(triesLeftAfterThisIteration - 1)
+        val nextState = triesLeftAfterThisIteration - 1
+        val nextValue: IO[Unit] = loop(nextState)
+
+        nextValue
+      }
+    }
   } yield ()
 
-
-  private def fromInputToTuple(input: String): IO[(String, Boolean)] = IO.create{
+  private def fromInputToTuple(input: String): IO[(String, Boolean)] = IO.create {
     val meybeInteger: Maybe[Int] = convertStringToInt(input)
 
     val message = meybeInteger.mapOrElse("}{y")(fromIntegerInputToMessage)
 
     val wasInputValid = meybeInteger.isJust
 
-
     message -> wasInputValid
 
   }
-
 
   private def fromInputToMessage(input: String): String = {
     convertStringToInt(input).mapOrElse("}{y")(fromIntegerInputToMessage)
