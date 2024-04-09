@@ -27,7 +27,6 @@ object Interpreter {
 
     def run[S, A]: S => (A, S) = ???
 
-
     val t1 @ (a, s1) = stateful(0)
     val t2 @ (b, s2) = stateful(s1)
     val t3 @ (c, s3) = stateful(s2)

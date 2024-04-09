@@ -4,7 +4,9 @@ ThisBuild / scalaVersion := "2.13.13"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "Monads"
+    name := "Monads",
+
+
   )
 
 
@@ -14,4 +16,7 @@ scalacOptions ++= Seq(
   "-language:implicitConversions",
   "-language:higherKinds"
 )
+
+
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9")
 
