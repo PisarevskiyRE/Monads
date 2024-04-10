@@ -37,14 +37,19 @@ object ProgramOld {
         _ <- display(hyphens)
       } yield ()
       else {
-        //loop(triesLeftAfterThisIteration - 1)
-        val nextState = triesLeftAfterThisIteration - 1
-        val nextValue: IO[Unit] = loop(nextState)
 
-        nextValue
+        val state = State(stateful)
+
+        state.flatMap(_ => state).runA(triesLeftAfterThisIteration)
       }
     }
   } yield ()
+
+  private lazy val stateful: Int => (IO[Unit], Int) = tries => {
+    val nextState = tries - 1
+    val nextValue: IO[Unit] = loop(tries)
+    nextValue -> nextState
+  }
 
   private def fromInputToTuple(input: String): IO[(String, Boolean)] = IO.create {
     val meybeInteger: Maybe[Int] = convertStringToInt(input)
