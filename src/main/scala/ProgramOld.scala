@@ -29,20 +29,27 @@ object ProgramOld {
     (message, wasInputValid) = result
     _ <- display(message)
     _ <- display(hyphens)
-    _ <- {
-      if (wasInputValid)
-        IO.create(())
-      else if (triesLeftAfterThisIteration == 0) for {
-        _ <- display("Й")
-        _ <- display(hyphens)
-      } yield ()
-      else {
+    _ <- decideWhatToDoNext(wasInputValid, triesLeftAfterThisIteration)
+  } yield ()
 
-        val state = State(stateful)
+  private def decideWhatToDoNext(wasInputValid: Boolean, triesLeftAfterThisIteration: Int): IO[Unit] = {
+    if (wasInputValid)
+      IO.create(())
+    else if (triesLeftAfterThisIteration == 0)
+      ranOutOfTries
+    else
+     tryAgain(triesLeftAfterThisIteration)
+  }
 
-        state.flatMap(_ => state).runA(triesLeftAfterThisIteration)
-      }
-    }
+  private def tryAgain(triesLeftAfterThisIteration: Int): IO[Unit] =  state
+    .flatMap(_ => state)
+    .runA(triesLeftAfterThisIteration)
+
+  private lazy val state = State(stateful)
+
+  private lazy val ranOutOfTries: IO[Unit] = for {
+    _ <- display("Й")
+    _ <- display(hyphens)
   } yield ()
 
   private lazy val stateful: Int => (IO[Unit], Int) = tries => {
