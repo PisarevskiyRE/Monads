@@ -38,10 +38,10 @@ object ProgramOld {
     else if (triesLeftAfterThisIteration == 0)
       ranOutOfTries
     else
-     tryAgain(triesLeftAfterThisIteration)
+      tryAgain(triesLeftAfterThisIteration)
   }
 
-  private def tryAgain(triesLeftAfterThisIteration: Int): IO[Unit] =  state
+  private def tryAgain(triesLeftAfterThisIteration: Int): IO[Unit] = state
     .flatMap(_ => state)
     .runA(triesLeftAfterThisIteration)
 

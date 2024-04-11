@@ -5,7 +5,7 @@ final case class Reader[-D, +A](run: D => A) extends AnyVal
 object Reader {
 
   def create[D, A](a: => A): Reader[D, A] =
-    Reader(s => (a, s))
+    Reader(s => a)
 
   implicit def M[D]: Monad[Reader[D, *]] = new Monad[Reader[D, *]] {
 
@@ -13,27 +13,27 @@ object Reader {
       create(a)
 
     final override def map[A, B](ca: Reader[D, A])(ab: A => B): Reader[D, B] =
-      Reader { s =>
+      Reader { d =>
 
-        val (a, s1) = ca.run(s)
+        val a = ca.run(d)
         val b = ab(a)
-        b -> s1
+        b
       }
 
     final override def flatMap[A, B](ca: Reader[D, A])(acb: A => Reader[D, B]): Reader[D, B] =
-      Reader { s =>
-        val (a, s1) = ca.run(s)
+      Reader { d =>
+        val a = ca.run(d)
         val cb = acb(a)
-        val (b, s2) = cb.run(s1)
+        val b = cb.run(d)
 
-        b -> s2
+        b
       }
 
     final override def flatten[A](cca: Reader[D, Reader[D, A]]): Reader[D, A] =
-      Reader { s =>
-        val (ca, s1) = cca.run(s)
-        val (a, s2) = ca.run(s1)
-        a -> s2
+      Reader { d =>
+        val ca = cca.run(d)
+        val a = ca.run(d)
+        a
       }
   }
 }
